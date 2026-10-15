@@ -105,7 +105,7 @@ void cargarDatos(vector<Libro>& bibloteca) { //void cargarDatos obtiene los dato
     ifstream archivoRegistros(rutaArchivoRegistros());
 
     if(!archivoRegistros.is_open()) {
-        cout << "No se encontro el archivo" << endl;
+        std::cout << "No se encontro el archivo" << endl;
         return;
     }
 
@@ -167,7 +167,7 @@ void EditarLibros(vector<Libro>& bibloteca) {
     cin >> idBuscar;
 
 
-    for(int i = 0; i < bibloteca.size(); i++) {
+    for(int i = 1; i < bibloteca.size(); i++) {
 
         if(bibloteca[i].id != idBuscar) {
              cout << "El ID no fue encontrado" << endl;
@@ -221,6 +221,77 @@ void EditarLibros(vector<Libro>& bibloteca) {
      
 }
 
+void ElimarLibros(vector<Libro>& bibloteca) {
+
+     ifstream archivoRegistros(rutaArchivoRegistros());
+     int IdEliminar;
+     int confrimacion;
+     
+
+    if(!archivoRegistros.is_open()) {
+        cout << "No se encontro el archivo" << endl;
+        return;
+    }
+
+    cout << "Ingresa el Id del libro que quieras eliminar" << endl;
+    cin >> IdEliminar;
+
+    for(int i = 0; i < bibloteca.size(); i++) {
+
+        if(bibloteca[i].id != IdEliminar) {
+             cout << "El ID no fue encontrado" << endl;
+             return;
+             cout << endl;
+        }
+
+        if(bibloteca[i].id == IdEliminar) {
+            cout << "==== Libro encontrado ====" << endl;
+            cout << "Nombre del libro: " << bibloteca[i].titulo << endl;
+            cout << "Autor: " << bibloteca[i].autor << endl;
+            cout << "Fecha: " << bibloteca[i].dia << "-" << bibloteca[i].mes << "-" << bibloteca[i].anio << endl;
+            cout << endl;
+            cout << endl;
+        }
+
+        cout << "Estas seguro de eliminar este libro: " << endl; // N = no y S = si
+        cout << "1] Si" << endl;
+        cout << "2] NO" << endl;
+        cin >> confrimacion;
+
+           if(confrimacion  == 1) {
+              bibloteca.erase(bibloteca.begin() + i);
+
+              ofstream archivoRegistros("registros.csv"); 
+
+              if(!archivoRegistros.is_open()) {
+                cout << "Error al actualizar el archivo" << endl;
+                return;
+              }
+
+              for(const auto& Libro : bibloteca) {
+                archivoRegistros << Libro.id << ","
+                                 << Libro.titulo << ","
+                                 << Libro.autor << ","
+                                 << Libro.dia << "-" << Libro.mes << "-" << Libro.anio << endl;
+              }
+
+              archivoRegistros.close();
+
+              cout << "Libro eliminado correctamente" << endl;
+
+              cout << endl;
+              cout << endl;
+
+            }
+
+          if(confrimacion == 2) {
+            cout << "Eliminacion cancelada" << endl;
+            return ;
+            }
+}
+}
+
+
 int main() {
     vector <Libro> bibloteca;
     int opcion = 0;
@@ -251,6 +322,9 @@ int main() {
 
         case 3:
         EditarLibros(bibloteca); break;
+
+        case 4:
+        ElimarLibros(bibloteca); break;
         
         case 5: cout << "Saliendo del programa "; break;
     }
